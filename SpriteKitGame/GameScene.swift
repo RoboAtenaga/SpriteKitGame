@@ -17,7 +17,6 @@ struct PhysicsCategory {
     static let Projectile: UInt32 = 0b10      // 2
 }
 
-// Tf is all this??!!
 
 func + (left: CGPoint, right: CGPoint) -> CGPoint {
     return CGPoint(x: left.x + right.x, y: left.y + right.y)
@@ -34,6 +33,8 @@ func * (point: CGPoint, scalar: CGFloat) -> CGPoint {
 func / (point: CGPoint, scalar: CGFloat) -> CGPoint {
     return CGPoint(x: point.x / scalar, y: point.y / scalar)
 }
+
+// Tf is all this??!!
 
 #if !(arch(x86_64) || arch(arm64))
     func sqrt(a: CGFloat) -> CGFloat {
@@ -56,6 +57,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var monstersDestroyed = 0
     // Declare of sprite constant for player
     let player = SKSpriteNode(imageNamed: "player")
+    var message = "Destroyed: 0"
+    let label = SKLabelNode(fontNamed: "Chalkduster")
     
     override func didMove(to view: SKView) {
         backgroundColor = SKColor.yellow
@@ -63,6 +66,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.position = CGPoint(x: size.width * 0.1, y: size.height * 0.5)
         // Make the player appear on the scene
         addChild(player)
+        
+        label.text = message
+        label.fontSize = 13
+        label.fontColor = SKColor.black
+        label.position = CGPoint(x: size.width * 0.9, y: size.height * 0.95)
+        addChild(label)
+
         
         physicsWorld.gravity = CGVector.zero
         physicsWorld.contactDelegate = self
@@ -205,6 +215,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         projectile.removeFromParent()
         monster.removeFromParent()
         monstersDestroyed += 1
+        message = "Destroyed: \(monstersDestroyed)"
+        label.text = message
         if (monstersDestroyed > 20) {
             let reveal = SKTransition.flipVertical(withDuration: 0.5)
             let gameOverScene = GameOverScene(size: self.size, won: true)
